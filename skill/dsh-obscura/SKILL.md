@@ -32,6 +32,7 @@ $NODE scripts/resolve.mjs            # 下载+校验+解压，打印 obscura 路
 - Linux x86_64/arm64、macOS、Windows：用上游 v0.2.7 的 `render` 资产；
 - 离线/内网：把对应归档放到一个目录，设 `DSH_OBSCURA_LOCAL_DIR=<dir>`（也支持已解压的目录）；
 - 缓存：`~/.cache/dsh-obscura/<tag>/`；重下用 `--force`。
+- 下载走 `curl`，会尊重 `HTTPS_PROXY`/`ALL_PROXY`；国内直连 GitHub 慢时先设代理再首次调用。
 
 **变体**：
 - `render`（默认）：布局/截图/PDF/抓取。

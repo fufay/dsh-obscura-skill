@@ -6,12 +6,19 @@
 ## 安装（DSH Desktop / Whale）
 
 ```sh
-git clone <repo> dsh-obscura-skill
+git clone https://github.com/fufay/dsh-obscura-skill
 sh dsh-obscura-skill/tools/install.sh        # 复制到 $DSH_HOME/skills/dsh-obscura
 ```
 
 之后在 DSH 里直接用触发词（"用 obscura 抓/截图/导出 PDF"）。首次调用会按平台下载二进制并校验 sha256
 （OHOS 用本项目自建资产；其它平台用上游 v0.2.7 资产）。
+
+## 下载与网络
+
+- 资产：OHOS 自建资产在本仓库 release（[v0.2.7](https://github.com/fufay/dsh-obscura-skill/releases/tag/v0.2.7)），
+  其它平台回退到上游 release。
+- `resolve.mjs` 用 `curl` 下载，**会尊重 `HTTPS_PROXY` / `ALL_PROXY`**（国内直连 GitHub release 很慢）。
+- 离线：`DSH_OBSCURA_LOCAL_DIR=<含归档的目录>`。
 
 ## 快速开始
 

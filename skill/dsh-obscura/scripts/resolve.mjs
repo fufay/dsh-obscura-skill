@@ -59,9 +59,17 @@ function baseUrls(file) {
 }
 
 async function download(url, dest) {
+  const tmp = dest + '.part';
+  // 优先 curl：尊重 HTTPS_PROXY/ALL_PROXY 环境变量（Node fetch 默认不走代理，国内直连 GitHub 很慢）
+  const hasCurl = spawnSync('curl', ['--version'], { stdio: 'ignore' }).status === 0;
+  if (hasCurl) {
+    const r = spawnSync('curl', ['-fL', '--retry', '3', '--connect-timeout', '20', '-o', tmp, url], { stdio: 'inherit' });
+    if (r.status !== 0) { fs.rmSync(tmp, { force: true }); throw new Error(`curl 下载失败（exit ${r.status}）`); }
+    fs.renameSync(tmp, dest);
+    return;
+  }
   const res = await fetch(url, { redirect: 'follow' });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const tmp = dest + '.part';
   await pipeline(Readable.fromWeb(res.body), fs.createWriteStream(tmp));
   fs.renameSync(tmp, dest);
 }
