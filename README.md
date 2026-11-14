@@ -6,7 +6,9 @@
 ## 安装（DSH Desktop / Whale）
 
 ```sh
-git clone https://github.com/fufay/dsh-obscura-skill
+# 国内优先 AtomGit；GitHub 亦可
+git clone https://atomgit.com/Kevin911/dsh-obscura-skill dsh-obscura-skill
+# 或 git clone https://github.com/fufay/dsh-obscura-skill dsh-obscura-skill
 sh dsh-obscura-skill/tools/install.sh        # 复制到 $DSH_HOME/skills/dsh-obscura
 ```
 
@@ -15,7 +17,9 @@ sh dsh-obscura-skill/tools/install.sh        # 复制到 $DSH_HOME/skills/dsh-ob
 
 ## 下载与网络
 
-- 资产：OHOS 自建资产在本仓库 release（[v0.2.7](https://github.com/fufay/dsh-obscura-skill/releases/tag/v0.2.7)），
+- 资产：OHOS 自建资产同时发布在
+  [GitHub release](https://github.com/fufay/dsh-obscura-skill/releases/tag/v0.2.7) 与
+  [AtomGit release](https://atomgit.com/Kevin911/dsh-obscura-skill/releases/tag/v0.2.7)；
   其它平台回退到上游 release。
 - `resolve.mjs` 用 `curl` 下载，**会尊重 `HTTPS_PROXY` / `ALL_PROXY`**（国内直连 GitHub release 很慢）。
 - 离线：`DSH_OBSCURA_LOCAL_DIR=<含归档的目录>`。

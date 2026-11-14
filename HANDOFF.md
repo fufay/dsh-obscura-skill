@@ -19,7 +19,9 @@
 - 2026-11-14：**已发布 GitHub**：<https://github.com/fufay/dsh-obscura-skill>，release
   <https://github.com/fufay/dsh-obscura-skill/releases/tag/v0.2.7>（OHOS render 81.7MB + stealth 95.3MB + manifest）；
   实测从 release 下载→sha256→解压→运行全通（经代理 10s/81MB）。
-  **AtomGit 待发**：缺 `ATOMGIT_TOKEN` + 仓库 `Kevin911/dsh-obscura-skill` 尚未创建（AtomGit 页面 000）。
+  **AtomGit 也已发布**：<https://atomgit.com/Kevin911/dsh-obscura-skill> /
+  release <https://atomgit.com/Kevin911/dsh-obscura-skill/releases/tag/v0.2.7>（代码 + 两个 OHOS 资产 + manifest）；
+  实测从 AtomGit 下载 81.7MB → sha256 → 解压 → 运行 13s（国内直连）。
 - 2026-11-14：补齐 **stealth 变体**：OHOS 自建 stealth 资产（95.3MB，BoringSSL）跑通；`--stealth` 自动选变体；
   实测 JA3 与 render 不同（`h2` + GREASE + Chrome UA）。发布待办：GitHub release + AtomGit。
 - 2026-11-14：完成 skill 首版：`resolve/fetch/serve/cdp` 四件套 + manifest（6 平台）+ OHOS 自建资产（81.7MB）+ 发布工具；
@@ -28,8 +30,7 @@
 
 ## 3. 下一步（按优先级）
 
-1. AtomGit 发布：建仓库 `Kevin911/dsh-obscura-skill`，提供 `ATOMGIT_TOKEN`（或 `--token-file`），再跑
-   `sh tools/publish-release.sh --tag v0.2.7 --atomgit-only`（会连带上传到 AtomGit release）。
+1. 真实站点回归（JS 站、登录态、`--pdf`、`--dump cookies`）。
 2. 用真实站点回归：`fetch --dump markdown`（JS 站）、`cdp --poll-selector`、`--pdf`、`--dump cookies`（登录态）。
 3. 评估 stealth 变体（BoringSSL + TLS 指纹），作为可选资产。
 4. 与 lightpanda skill 的默认路由（轻抓取 vs 渲染）写进上层使用说明。
