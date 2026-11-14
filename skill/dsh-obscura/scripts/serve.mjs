@@ -38,7 +38,10 @@ async function health() {
   } catch { return null; }
 }
 
-function binPath() { return execFileSync(process.execPath, [join(HERE, 'resolve.mjs')], { encoding: 'utf8' }).trim(); }
+function binPath() {
+  const variant = flag('stealth') ? 'stealth' : (process.env.DSH_OBSCURA_VARIANT || 'render');
+  return execFileSync(process.execPath, [join(HERE, 'resolve.mjs')], { encoding: 'utf8', env: { ...process.env, DSH_OBSCURA_VARIANT: variant } }).trim();
+}
 
 function fontDirs() {
   const dirs = optAll('font-dir');

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_at": "2026-11-14T05:42:03.520Z",
+  "generated_at": "2026-11-14T06:11:03.376Z",
   "release_tag": "v0.2.7",
   "upstream": {
     "repo": "h4ckf0r0day/obscura",
@@ -69,12 +69,72 @@
       "size": 81738044,
       "sha256": "8a2bbeda535a680e6423a121aef87da2b5fc2ca5e0fb3135bc88095f9474c199",
       "source": "self-built-ohos",
-      "version": "0.1.0-dev+0ecc417",
-      "notes": "musl 动态链接 OHOS libc；已 ohos-selfsign 自签；由本项目 tools/build-obscura-ohos.sh 产出"
+      "version": "0.1.0-dev+0ecc417"
+    },
+    {
+      "os": "linux",
+      "arch": "x86_64",
+      "libc": "glibc",
+      "variant": "stealth",
+      "file": "obscura-x86_64-linux-stealth.tar.gz",
+      "size": 75424462,
+      "sha256": "1d6514beacef9fe75671f4bf7a66d3a7bceef9bde39f8156d1ca4a701eb1e216",
+      "source": "upstream"
+    },
+    {
+      "os": "linux",
+      "arch": "aarch64",
+      "libc": "glibc",
+      "variant": "stealth",
+      "file": "obscura-aarch64-linux-stealth.tar.gz",
+      "size": 73185137,
+      "sha256": "f51167d7ae98be6c6327d3e7e015e74430e190ea6846589e3c131e10641a52b7",
+      "source": "upstream"
+    },
+    {
+      "os": "darwin",
+      "arch": "aarch64",
+      "libc": "darwin",
+      "variant": "stealth",
+      "file": "obscura-aarch64-macos-stealth.tar.gz",
+      "size": 70695537,
+      "sha256": "3b05ebcd4755a325be224992fad6a038d86f7e5ab483e4c781f14de06cab973f",
+      "source": "upstream"
+    },
+    {
+      "os": "darwin",
+      "arch": "x86_64",
+      "libc": "darwin",
+      "variant": "stealth",
+      "file": "obscura-x86_64-macos-stealth.tar.gz",
+      "size": 73143771,
+      "sha256": "62bd094388a1f97480fd06be349299e721a3488c216c86a2fce9367310594ec3",
+      "source": "upstream"
+    },
+    {
+      "os": "win32",
+      "arch": "x86_64",
+      "libc": "msvc",
+      "variant": "stealth",
+      "file": "obscura-x86_64-windows-stealth.zip",
+      "size": 77011421,
+      "sha256": "ffae5e71cfca0108709b57ad83ce7d6b588eff6a15a43093b0cf867dbd18c867",
+      "source": "upstream"
+    },
+    {
+      "os": "openharmony",
+      "arch": "aarch64",
+      "libc": "musl",
+      "variant": "stealth",
+      "file": "obscura-aarch64-ohos-stealth.tar.gz",
+      "size": 95262847,
+      "sha256": "47039e2f6e0da4ecc82aafeceb2e7434d1b9ea138289af94d924f6f21a2af111",
+      "source": "self-built-ohos",
+      "version": "0.1.0-dev+0ecc417"
     }
   ],
   "notes": {
-    "variant": "默认 render（含布局/截图/PDF 能力）；stealth 变体（BoringSSL、TLS 指纹）暂未纳入",
+    "variant": "render 为默认；stealth = render + wreq/BoringSSL TLS 指纹 + tracker 屏蔽（体积更大）",
     "windows": "上游提供原生 exe（lightpanda 需要 WSL2，这是本 skill 的差异点）",
     "openharmony": "上游不发 musl/OHOS 资产，由本项目自建并随 release 发布；也可用 DSH_OBSCURA_LOCAL_DIR 离线放置",
     "fonts": "内嵌仅 Noto Sans/Arabic/Hebrew；CJK 渲染需 serve --font-dir /system/fonts（fetch --screenshot 没有该参数）"

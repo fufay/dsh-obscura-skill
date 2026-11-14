@@ -22,6 +22,7 @@ const TAG = MANIFEST.release_tag;
 const CACHE = process.env.DSH_OBSCURA_CACHE || join(homedir(), '.cache', 'dsh-obscura');
 const argv = process.argv.slice(2);
 const has = (n) => argv.includes('--' + n);
+const VARIANT = process.env.DSH_OBSCURA_VARIANT || 'render';
 
 function fail(msg, code = 1) { console.error('[resolve] ' + msg); process.exit(code); }
 
@@ -35,8 +36,8 @@ function platformAsset() {
   const arch = a === 'arm64' || a === 'aarch64' ? 'aarch64' : a === 'x64' || a === 'x86_64' ? 'x86_64' : a;
   const os = p === 'openharmony' ? 'openharmony' : p === 'linux' ? 'linux' : p === 'darwin' ? 'darwin' : p === 'win32' ? 'win32' : null;
   if (!os) fail(`不支持的平台: ${p}/${a}`, 3);
-  const found = MANIFEST.assets.find((x) => x.os === os && x.arch === arch && (x.variant || 'render') === 'render');
-  if (!found) fail(`没有 ${os}/${arch} 的资产（manifest 现有: ${MANIFEST.assets.map((x) => x.os + '/' + x.arch).join(', ')}）`, 4);
+  const found = MANIFEST.assets.find((x) => x.os === os && x.arch === arch && (x.variant || 'render') === VARIANT);
+  if (!found) fail(`没有 ${os}/${arch}/${VARIANT} 的资产（可用: ${MANIFEST.assets.map((x) => x.os + '/' + x.arch + '/' + (x.variant || 'render')).join(', ')}）`, 4);
   return found;
 }
 

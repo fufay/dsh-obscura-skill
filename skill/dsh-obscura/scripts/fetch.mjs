@@ -43,7 +43,8 @@ const urls = argv.filter((a) => !a.startsWith('--'));
 
 if (!urls.length) { console.error('[fetch] 缺少 URL'); process.exit(2); }
 
-const bin = execFileSync(process.execPath, [join(HERE, 'resolve.mjs')], { encoding: 'utf8' }).trim();
+const variant = stealth ? 'stealth' : (process.env.DSH_OBSCURA_VARIANT || 'render');
+const bin = execFileSync(process.execPath, [join(HERE, 'resolve.mjs')], { encoding: 'utf8', env: { ...process.env, DSH_OBSCURA_VARIANT: variant } }).trim();
 const mode = dump || (screenshot ? null : 'markdown');
 
 function runOne(url, i) {

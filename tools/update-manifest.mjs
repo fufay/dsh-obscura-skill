@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // 用 GitHub Release API 的 JSON 刷新 manifest 里的上游资产（size/sha256），并可选更新 OHOS 资产。
 // 用法:
-//   node tools/update-manifest.mjs --release-json <rel.json> [--ohos _build/assets/obscura-aarch64-ohos.tar.gz]
+//   node tools/update-manifest.mjs --release-json <rel.json> [--ohos render.tar.gz] [--ohos-stealth stealth.tar.gz]
 //   node tools/update-manifest.mjs --fetch v0.2.7           # 直接拉 API（需网络/代理）
 // 说明: GitHub API 的 asset.digest 形如 "sha256:..."；无 digest 时回退为 null（需手工补）。
 import fs from 'node:fs';
@@ -49,12 +49,14 @@ for (const a of m.assets) {
   if (os) Object.assign(a, { os, arch, libc });
   n++;
 }
-const ohos = opt('ohos');
-if (ohos) {
-  const buf = fs.readFileSync(ohos);
-  const e = m.assets.find((x) => x.os === 'openharmony');
-  if (e) { e.size = buf.length; e.sha256 = createHash('sha256').update(buf).digest('hex'); }
+for (const [flag, variant] of [['ohos', 'render'], ['ohos-stealth', 'stealth']]) {
+  const file = opt(flag);
+  if (!file) continue;
+  const buf = fs.readFileSync(file);
+  const e = m.assets.find((x) => x.os === 'openharmony' && (x.variant || 'render') === variant);
+  if (e) { e.size = buf.length; e.sha256 = createHash('sha256').update(buf).digest('hex'); delete e.notes; }
+  else console.error(`[manifest] 没有 openharmony/${variant} 条目`);
 }
 m.generated_at = new Date().toISOString();
 fs.writeFileSync(MANIFEST, JSON.stringify(m, null, 2) + '\n');
-console.log(`[manifest] 更新 ${n} 条上游资产${ohos ? ' + OHOS 资产' : ''} → ${MANIFEST}`);
+console.log(`[manifest] 更新 ${n} 条上游资产${opt('ohos') ? ' + OHOS render' : ''}${opt('ohos-stealth') ? ' + OHOS stealth' : ''} → ${MANIFEST}`);

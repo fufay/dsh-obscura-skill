@@ -3,6 +3,16 @@
 > 把 **Obscura** 封装成跨平台 DSH skill：真渲染截图/PDF、cookie 持久化、CDP、Windows 原生。
 > 创建于 2026-11-14；上位项目 `dsh-lightpanda-skill` 的结构参照。
 
+## 安装（DSH Desktop / Whale）
+
+```sh
+git clone <repo> dsh-obscura-skill
+sh dsh-obscura-skill/tools/install.sh        # 复制到 $DSH_HOME/skills/dsh-obscura
+```
+
+之后在 DSH 里直接用触发词（"用 obscura 抓/截图/导出 PDF"）。首次调用会按平台下载二进制并校验 sha256
+（OHOS 用本项目自建资产；其它平台用上游 v0.2.7 资产）。
+
 ## 快速开始
 
 ```sh

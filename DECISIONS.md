@@ -12,6 +12,8 @@
 | D-004 | 2026-11-14 | 首版不做 stealth；默认 render 变体 | render 已覆盖截图/PDF/抓取；stealth 需 BoringSSL 交叉，单独立项 | `docs/10` §3 |
 | D-005 | 2026-11-14 | 缓存默认 `~/.cache/dsh-obscura`（不用 `/tmp`） | OHOS `/tmp` 不可执行（EPERM），实测 126 | `scripts/resolve.mjs` |
 
+| D-006 | 2026-11-14 | stealth 作为**可选变体**（`--stealth` 自动切换），保留 render 为默认 | 体积/启动成本敏感场景不需要 BoringSSL；变体按需下载 | `assets/manifest.json`、`resolve.mjs`、`docs/10` |
+
 ## 追加格式
 
 ```text

@@ -16,6 +16,8 @@
 
 ## 2. 上次做到哪
 
+- 2026-11-14：补齐 **stealth 变体**：OHOS 自建 stealth 资产（95.3MB，BoringSSL）跑通；`--stealth` 自动选变体；
+  实测 JA3 与 render 不同（`h2` + GREASE + Chrome UA）。发布待办：GitHub release + AtomGit。
 - 2026-11-14：完成 skill 首版：`resolve/fetch/serve/cdp` 四件套 + manifest（6 平台）+ OHOS 自建资产（81.7MB）+ 发布工具；
   本机实测 fetch（markdown/text）、截图、serve+CDP（evaluate/screenshot/PDF）全通过（CJK 正常）。
 - 2026-11-14：初始化项目骨架（`AGENTS.md` / `HANDOFF.md` / `DECISIONS.md` / `README.md` / `docs/` 编号文档 / `tools/` / `.gitignore`）。

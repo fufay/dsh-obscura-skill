@@ -33,6 +33,12 @@ $NODE scripts/resolve.mjs            # 下载+校验+解压，打印 obscura 路
 - 离线/内网：把对应归档放到一个目录，设 `DSH_OBSCURA_LOCAL_DIR=<dir>`（也支持已解压的目录）；
 - 缓存：`~/.cache/dsh-obscura/<tag>/`；重下用 `--force`。
 
+**变体**：
+- `render`（默认）：布局/截图/PDF/抓取。
+- `stealth`：render + wreq/BoringSSL（Chrome TLS 指纹、HTTP/2 指纹、client hints）+ tracker 屏蔽。
+  用法：命令加 `--stealth`（scripts 会自动选 stealth 资产，首次多下一次），或 `export DSH_OBSCURA_VARIANT=stealth`。
+  代价：包更大、启动更慢；不保证过所有反爬。
+
 ## 2. P2：无状态抓取
 
 ```sh
@@ -103,7 +109,8 @@ $NODE scripts/cdp.mjs --port 9222 --url "https://site" --cookies
 
 - 轻量抓取（只要正文/接口、成本敏感）→ 仍用 `dsh-lightpanda`（更快更省）。
 - 要**真渲染**（截图/PDF/布局）、要 **cookie 持久化**、要 **HttpOnly cookie / assets 清单**、要 **Windows 原生**、要 **MCP** → 用本 skill。
-- 强反爬站点（Cloudflare/Akamai）：本 skill 默认 **render** 版本，没有 TLS 指纹伪装；需要时另做 stealth 构建（BoringSSL，见项目 `docs/`）。
+- 强反爬站点（Cloudflare/Akamai）：加 `--stealth` 用 stealth 变体（BoringSSL + TLS 指纹 + tracker 屏蔽）。
+- 变体切换：`serve` 需要 `restart` 才会换二进制；缓存按变体分目录，互不干扰。
 
 ## 6. 返回与判定
 

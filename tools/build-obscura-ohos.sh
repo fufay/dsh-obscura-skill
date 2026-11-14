@@ -15,6 +15,8 @@
 #   --no-sign      只构建，不签名（产物无法在本机执行）
 #   --no-smoke     跳过 smoke（--version/JS/截图）
 #   --no-package   不打包 tar.gz（只构建/签名）
+#   --stealth      构建 render+stealth 变体（BoringSSL/TLS 指纹；需要 cmake/make/libclang），
+#                  产出 obscura-aarch64-ohos-stealth.tar.gz
 #   --smoke-net    额外跑一条联网 smoke（https://www.baidu.com）
 #   -h, --help     显示帮助
 #
@@ -52,7 +54,6 @@ SHIM_DIR=$PROJ/_build/shim
 TARGET_DIR=$PROJ/_build/obscura-target
 LOG=$PROJ/_build/obscura-build.log
 SMOKE_PNG=$PROJ/_build/evidence/smoke.png
-ASSET=$PROJ/_build/assets/obscura-aarch64-ohos.tar.gz
 SELFSIGN=${OHOS_SELFSIGN:-$WS/Skills/2026-10-28-ohos-native-tool/_build/ohos-selfsign}
 PROXY_SH=$WS/Common/ProxyAgent/scripts/with-proxy.sh
 
@@ -62,6 +63,7 @@ DO_SIGN=1
 DO_SMOKE=1
 SMOKE_NET=0
 DO_PACKAGE=1
+STEALTH=0
 
 usage() { sed -n '2,26p' "$SELF" | sed 's/^# \{0,1\}//'; }
 die() { echo "ERROR: $*" >&2; exit 1; }
@@ -75,11 +77,27 @@ while [ $# -gt 0 ]; do
     --no-smoke) DO_SMOKE=0 ;;
     --smoke-net) SMOKE_NET=1 ;;
     --no-package) DO_PACKAGE=0 ;;
+    --stealth) STEALTH=1 ;;
     -h|--help) usage; exit 0 ;;
     *) die "未知参数：$1（--help 看用法）" ;;
   esac
   shift
 done
+
+if [ "$STEALTH" = 1 ]; then
+  FEATURES=render,stealth
+  ASSET=$PROJ/_build/assets/obscura-aarch64-ohos-stealth.tar.gz
+  TARGET_DIR=$PROJ/_build/obscura-stealth-target
+  LIBCLANG_PATH=${LIBCLANG_PATH:-/storage/Users/currentUser/.harmonybrew/opt/llvm@22/lib}
+  export LIBCLANG_PATH
+  # BoringSSL 是 C 库；btls-sys 对 unix 目标默认追加 -lstdc++，OHOS 没有 libstdc++。
+  # 改成链 libc（BoringSSL 不依赖 C++ 运行时），避免最终链接失败。
+  export BORING_BSSL_RUST_CPPLIB=c
+else
+  FEATURES=render
+  ASSET=$PROJ/_build/assets/obscura-aarch64-ohos.tar.gz
+  TARGET_DIR=$PROJ/_build/obscura-target
+fi
 
 # ---- 工具函数 ---------------------------------------------------------------
 # 走代理执行；USE_PROXY=0 或没有 with-proxy.sh 时直接执行。
@@ -117,6 +135,12 @@ command -v cargo >/dev/null 2>&1 || die "找不到 cargo（应在 $BREW）"
 command -v cc >/dev/null 2>&1 || die "找不到 C 编译器 cc"
 echo "    rustc: $($BREW/rustc --version)"
 echo "    cargo: $(cargo --version)"
+if [ "$STEALTH" = 1 ]; then
+  command -v cmake >/dev/null 2>&1 || die "stealth 构建需要 cmake"
+  command -v make >/dev/null 2>&1 || die "stealth 构建需要 make"
+  command -v perl >/dev/null 2>&1 || die "stealth 构建（BoringSSL）需要 perl"
+  echo "    BoringSSL：cmake/make/perl 就绪，LIBCLANG_PATH=$LIBCLANG_PATH"
+fi
 [ "$USE_PROXY" = 1 ] && echo "    网络：经 with-proxy.sh" || echo "    网络：直连（--no-proxy）"
 
 # ---- 1. 源码 ----------------------------------------------------------------
@@ -165,7 +189,7 @@ $BREW/rustc --edition 2021 --crate-type=lib --emit=obj -O \
 [ -s "$SHIM_DIR/clear_cache.o" ] || die "垫片编译失败：$SHIM_DIR/clear_cache.o"
 
 # ---- 3. 构建 ----------------------------------------------------------------
-say "开始构建（render-only）"
+say "开始构建（features=$FEATURES）"
 export PATH=$BREW:$PATH
 export CARGO_TARGET_DIR=$TARGET_DIR
 export RUSTFLAGS="-C link-arg=$SHIM_DIR/clear_cache.o"
@@ -174,7 +198,7 @@ export RUSTY_V8_SRC_BINDING_PATH=$V8_DIR/$BIND_FILE
 
 mkdir -p "$(dirname "$LOG")"
 start=$(date +%s)
-if ( cd "$SRC" && net cargo build --release -p obscura-cli --bins --features render >"$LOG" 2>&1 ); then
+if ( cd "$SRC" && net cargo build --release -p obscura-cli --bins --features "$FEATURES" >"$LOG" 2>&1 ); then
   :
 else
   echo "---- 构建失败，日志末尾 ----" >&2
