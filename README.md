@@ -15,14 +15,29 @@ sh dsh-obscura-skill/tools/install.sh        # 复制到 $DSH_HOME/skills/dsh-ob
 之后在 DSH 里直接用触发词（"用 obscura 抓/截图/导出 PDF"）。首次调用会按平台下载二进制并校验 sha256
 （OHOS 用本项目自建资产；其它平台用上游 v0.2.7 资产）。
 
-## 下载与网络
+## 各平台二进制从哪来
 
-- 资产：OHOS 自建资产同时发布在
-  [GitHub release](https://github.com/fufay/dsh-obscura-skill/releases/tag/v0.2.7) 与
-  [AtomGit release](https://atomgit.com/Kevin911/dsh-obscura-skill/releases/tag/v0.2.7)；
-  其它平台回退到上游 release。
-- `resolve.mjs` 用 `curl` 下载，**会尊重 `HTTPS_PROXY` / `ALL_PROXY`**（国内直连 GitHub release 很慢）。
-- 离线：`DSH_OBSCURA_LOCAL_DIR=<含归档的目录>`。
+**本仓库 release 只放 HarmonyOS 自建资产**（上游没有 musl/OHOS 版）。其他平台直接用上游 Obscura v0.2.7
+的官方资产，`resolve.mjs` 会自动下载并校验 sha256：
+
+| 平台 | 资产文件（render / stealth） | 来源 |
+|---|---|---|
+| HarmonyOS PC (aarch64) | `obscura-aarch64-ohos{,-stealth}.tar.gz` | **本仓库 release**（自建 + 自签） |
+| Linux x86_64 | `obscura-x86_64-linux{,-stealth}.tar.gz` | 上游 release |
+| Linux aarch64 | `obscura-aarch64-linux{,-stealth}.tar.gz` | 上游 release |
+| macOS arm64 | `obscura-aarch64-macos{,-stealth}.tar.gz` | 上游 release |
+| macOS x86_64 | `obscura-x86_64-macos{,-stealth}.tar.gz` | 上游 release |
+| Windows x64 | `obscura-x86_64-windows{,-stealth}.zip` | 上游 release |
+
+上游：<https://github.com/h4ckf0r0day/obscura/releases/tag/v0.2.7>
+
+**查找顺序**（同名文件）：本仓库 GitHub release → 本仓库 AtomGit release → 上游 release；找到后按 manifest 的 sha256 校验。
+
+如果 GitHub 慢/不可达（国内常见）：
+
+1. 先设代理再首次调用：`export HTTPS_PROXY=http://127.0.0.1:7890`（`resolve.mjs` 用 `curl`，会读取该变量）；
+2. 或手动下载上表对应资产放进一个目录，设 `DSH_OBSCURA_LOCAL_DIR=<dir>`（离线安装）；
+3. 或自建镜像：`DSH_OBSCURA_ASSET_BASE=https://<镜像>/<tag>`。
 
 ## 快速开始
 

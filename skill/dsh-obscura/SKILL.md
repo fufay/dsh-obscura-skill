@@ -29,7 +29,8 @@ $NODE scripts/resolve.mjs            # 下载+校验+解压，打印 obscura 路
 ```
 
 - **HarmonyOS PC**：用本项目自建 `obscura-aarch64-ohos.tar.gz`（musl + 自签，可直接跑）；
-- Linux x86_64/arm64、macOS、Windows：用上游 v0.2.7 的 `render` 资产；
+- **Linux x86_64/arm64、macOS、Windows：用上游 v0.2.7 的官方资产**（本仓库 release 只有 OHOS 自建资产，
+  上游 release: <https://github.com/h4ckf0r0day/obscura/releases/tag/v0.2.7>），`resolve.mjs` 会自动回退下载；
 - 离线/内网：把对应归档放到一个目录，设 `DSH_OBSCURA_LOCAL_DIR=<dir>`（也支持已解压的目录）；
 - 缓存：`~/.cache/dsh-obscura/<tag>/`；重下用 `--force`。
 - 下载走 `curl`，会尊重 `HTTPS_PROXY`/`ALL_PROXY`；国内直连 GitHub 慢时先设代理再首次调用。
