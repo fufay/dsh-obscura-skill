@@ -114,7 +114,21 @@ $NODE scripts/cdp.mjs --port 9222 --url "https://site" --cookies
 - 强反爬站点（Cloudflare/Akamai）：加 `--stealth` 用 stealth 变体（BoringSSL + TLS 指纹 + tracker 屏蔽）。
 - 变体切换：`serve` 需要 `restart` 才会换二进制；缓存按变体分目录，互不干扰。
 
-## 6. 返回与判定
+## 6. 登录 / 图形验证码（当前边界）
+
+- **能做**：单次连接内填表 + 截图验证码 + 识别后回填：
+  ```sh
+  $NODE scripts/cdp.mjs --port 9222 --url "https://site/login" \
+    --fill "#user=alice" --fill "#pass=secret" --clip-selector "#captcha" --out cap.png
+  # 读出 cap.png 后，同一连接内继续（若还没提交）——见下条限制
+  ```
+  `--fill` 用原生 setter + `input/change` 事件，框架（React/Vue）也能触发。
+- **限制**：Obscura 的页面是**连接级**的——CDP 连接关闭后 target 即销毁；实测**表单 POST 导航会 reset 连接**。
+  因此"分两次调用：先截验证码、再回填提交"目前不稳定；跨调用的页面状态保不住。
+- 建议：把填表→截图→回填→提交放在**一次调用**里（答案能预先拿到时），或等我们补"单连接内等待外部识别结果"的支持。
+- 登录态本身可持久化（`serve --storage-dir`，cookie 跨重启保留，已验证）。
+
+## 7. 返回与判定
 
 - `fetch.mjs --json`：`{ok,url,output,screenshot?,stderr}`（多 URL 为数组）。
 - `cdp.mjs`：`{ok,url,title,value,screenshot?,pdf?,cookies?,error?}`。
