@@ -50,6 +50,17 @@ $NODE skill/dsh-obscura/scripts/serve.mjs ensure --port 9222
 $NODE skill/dsh-obscura/scripts/cdp.mjs --port 9222 --url https://example.com --screenshot /tmp/a.png
 ```
 
+## 登录（含图形验证码，给 agent 用）
+
+```sh
+# 账号密码从环境变量读；验证码截成图片给 agent 识别
+node skill/dsh-obscura/scripts/login.mjs start --port 9222 --url https://site/login \
+  --user-sel "#user" --user-env LOGIN_USER --pass-sel "#pass" --pass-env LOGIN_PASS \
+  --captcha-sel "#captcha" --captcha-out /tmp/cap.png --code-sel "#code"
+# agent 识别 /tmp/cap.png 后：
+node skill/dsh-obscura/scripts/login.mjs answer --port 9222 --code A7K3 --success-url https://site/home
+```
+
 ## 文档索引
 
 | 文件 | 内容 |

@@ -114,19 +114,31 @@ $NODE scripts/cdp.mjs --port 9222 --url "https://site" --cookies
 - 强反爬站点（Cloudflare/Akamai）：加 `--stealth` 用 stealth 变体（BoringSSL + TLS 指纹 + tracker 屏蔽）。
 - 变体切换：`serve` 需要 `restart` 才会换二进制；缓存按变体分目录，互不干扰。
 
-## 6. 登录 / 图形验证码（当前边界）
+## 6. 登录 / 图形验证码（给 agent 的两步流程）
 
-- **能做**：单次连接内填表 + 截图验证码 + 识别后回填：
-  ```sh
-  $NODE scripts/cdp.mjs --port 9222 --url "https://site/login" \
-    --fill "#user=alice" --fill "#pass=secret" --clip-selector "#captcha" --out cap.png
-  # 读出 cap.png 后，同一连接内继续（若还没提交）——见下条限制
-  ```
-  `--fill` 用原生 setter + `input/change` 事件，框架（React/Vue）也能触发。
-- **限制**：Obscura 的页面是**连接级**的——CDP 连接关闭后 target 即销毁；实测**表单 POST 导航会 reset 连接**。
-  因此"分两次调用：先截验证码、再回填提交"目前不稳定；跨调用的页面状态保不住。
-- 建议：把填表→截图→回填→提交放在**一次调用**里（答案能预先拿到时），或等我们补"单连接内等待外部识别结果"的支持。
-- 登录态本身可持久化（`serve --storage-dir`，cookie 跨重启保留，已验证）。
+Obscura 的页面随 CDP 连接销毁，所以登录用 `login.mjs`（后台进程持住连接）：
+
+```sh
+# 1) start：开登录页→等验证码→填账号/密码→裁剪验证码图片→后台保持连接
+node scripts/login.mjs start --port 9222 --url "https://site/login" \
+  --user-sel "#user" --user-env LOGIN_USER \
+  --pass-sel "#pass" --pass-env LOGIN_PASS \
+  --captcha-sel "#captcha" --captcha-out /tmp/cap.png \
+  --code-sel "#code"
+# 输出 {"ok":true,"captcha":"/tmp/cap.png",...}
+
+# 2) agent 读 /tmp/cap.png 识别出验证码（如 A7K3）
+
+# 3) answer：回填→提交→返回 URL/title/cookies
+node scripts/login.mjs answer --port 9222 --code A7K3 --success-url "https://site/home"
+# 输出 {"ok":true,"submitted":true,"url":...,"title":...,"cookies":[...]}
+```
+
+- 提交优先用 **in-page fetch**（不触发原生表单 POST 导航；实测原生 POST 会把 CDP 连接 reset）。
+- 密码只从 `--user-env/--pass-env` 或 `--pass-file` 读，不走命令行、不回显。
+- 只要截验证码（非登录）：`node scripts/captcha.mjs --url ... --selector "#captcha" --out cap.png`。
+- `login.mjs status/abort --port 9222` 查看/放弃进行中的登录。
+- 登录态持久化：`serve --storage-dir`（cookie 跨重启保留，已验证）。
 
 ## 7. 返回与判定
 
