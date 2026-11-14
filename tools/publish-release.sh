@@ -1,0 +1,50 @@
+#!/system/bin/sh
+# 发布 skill 资产到 GitHub + AtomGit。用法:
+#   sh tools/publish-release.sh --tag v0.2.7 [--assets DIR] [--github-only|--atomgit-only]
+# 需要:
+#   - gh 已登录（GitHub）
+#   - ATOMGIT_TOKEN 或 ATOMGIT_TOKEN_FILE（AtomGit PRIVATE-TOKEN）
+# 说明: tag 用上游版本号（v0.2.7）便于对照；AtomGit 不支持同名覆盖，重发请换 tag。
+set -eu
+ROOT=$(cd "$(dirname "$0")/.." && pwd)
+ASSETS=${ASSETS:-$ROOT/_build/assets}
+TAG=""
+ONLY=${ONLY:-both}
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --tag) TAG=$2; shift 2;;
+    --assets) ASSETS=$2; shift 2;;
+    --github-only) ONLY=github; shift;;
+    --atomgit-only) ONLY=atomgit; shift;;
+    *) echo "unknown arg: $1"; exit 2;;
+  esac
+done
+[ -n "$TAG" ] || { echo "缺少 --tag"; exit 2; }
+[ -d "$ASSETS" ] || { echo "资产目录不存在: $ASSETS"; exit 2; }
+cp "$ROOT/skill/dsh-obscura/assets/manifest.json" "$ASSETS/manifest.json"
+GH_REPO=${GH_REPO:-fufay/dsh-obscura-skill}
+AT_REPO=${AT_REPO:-Kevin911/dsh-obscura-skill}
+NOTES=$ROOT/_build/release-notes.md
+if [ ! -f "$NOTES" ]; then
+  printf '# dsh-obscura assets %s\n\nObscura binaries (upstream render builds + OHOS self-built musl) + manifest (sha256).\n' "$TAG" > "$NOTES"
+fi
+B=/storage/Users/currentUser/.harmonybrew/bin
+GH=$B/gh
+[ -x "$GH" ] || GH=gh
+if [ "$ONLY" != "atomgit" ]; then
+echo "== GitHub release =="
+if "$GH" release view "$TAG" --repo "$GH_REPO" >/dev/null 2>&1; then
+  echo "[gh] release 已存在"
+else
+  "$GH" release create "$TAG" --repo "$GH_REPO" --title "$TAG" --notes-file "$NOTES"
+fi
+echo "== GitHub 上传 =="
+for f in "$ASSETS"/*; do [ -f "$f" ] && "$GH" release upload "$TAG" "$f" --repo "$GH_REPO" --clobber; done
+fi
+if [ "$ONLY" != "github" ]; then
+echo "== AtomGit release =="
+python3 "$ROOT/tools/atomgit_release.py" --repo "$AT_REPO" --tag "$TAG" --name "$TAG" --body-file "$NOTES" --assets "$ASSETS"
+fi
+echo "✅ 完成"
+echo "GitHub:  https://github.com/$GH_REPO/releases/tag/$TAG"
+echo "AtomGit: https://atomgit.com/$AT_REPO/releases/tag/$TAG"

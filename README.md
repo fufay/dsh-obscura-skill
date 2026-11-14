@@ -1,0 +1,38 @@
+# dsh-obscura-skill
+
+> 把 **Obscura** 封装成跨平台 DSH skill：真渲染截图/PDF、cookie 持久化、CDP、Windows 原生。
+> 创建于 2026-11-14；上位项目 `dsh-lightpanda-skill` 的结构参照。
+
+## 快速开始
+
+```sh
+NODE=node
+$NODE skill/dsh-obscura/scripts/resolve.mjs --check   # 本平台选哪个资产
+$NODE skill/dsh-obscura/scripts/resolve.mjs           # 下载+校验+解压
+$NODE skill/dsh-obscura/scripts/fetch.mjs https://example.com --dump markdown
+$NODE skill/dsh-obscura/scripts/serve.mjs ensure --port 9222
+$NODE skill/dsh-obscura/scripts/cdp.mjs --port 9222 --url https://example.com --screenshot /tmp/a.png
+```
+
+## 文档索引
+
+| 文件 | 内容 |
+|---|---|
+| [SKILL.md](skill/dsh-obscura/SKILL.md) | **skill 本体**：触发词、三档形态、用法与判定 |
+| [AGENTS.md](AGENTS.md) | 稳定规则（读序/铁律/构建验收/git） |
+| [HANDOFF.md](HANDOFF.md) | 当前状态 / 下一步 / 坑 |
+| [DECISIONS.md](DECISIONS.md) | 决策记录 |
+| [docs/01-项目概览.md](docs/01-项目概览.md) | 目标 / 范围 / 明确不做 |
+| [docs/02-参考资源清单.md](docs/02-参考资源清单.md) | 上游版本与资产清单 |
+| [docs/10-设计与能力对比.md](docs/10-设计与能力对比.md) | **与 lightpanda 的能力矩阵与取舍** |
+| [docs/11-发布与设计.md](docs/11-发布与设计.md) | 资产模型、发布流程、升级步骤 |
+| [docs/99-参考链接.md](docs/99-参考链接.md) | 来源 |
+
+## 目录
+
+| 目录 | 用途 |
+|---|---|
+| `skill/dsh-obscura/` | skill 本体（SKILL.md / scripts / assets） |
+| `tools/` | 构建 OHOS 资产、刷新 manifest、发布 |
+| `_build/` | 构建产物与下载缓存（**不入库**） |
+| `_refer/` | 上游源码原始副本（**不入库**） |

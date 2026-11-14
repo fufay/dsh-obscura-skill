@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "generated_at": "2026-11-14T05:42:03.520Z",
+  "release_tag": "v0.2.7",
+  "upstream": {
+    "repo": "h4ckf0r0day/obscura",
+    "tag": "v0.2.7",
+    "commit": "0ecc41770da5c5300227dd83a15bfa1e5100d5d4",
+    "fetched_at": "2026-11-14",
+    "license": "Apache-2.0"
+  },
+  "assets": [
+    {
+      "os": "linux",
+      "arch": "x86_64",
+      "libc": "glibc",
+      "variant": "render",
+      "file": "obscura-x86_64-linux.tar.gz",
+      "size": 72018118,
+      "sha256": "11b53d27cd743e00e196e216920e7f3f794cf378e3f1792b8d25d3beabaf9cad",
+      "source": "upstream"
+    },
+    {
+      "os": "linux",
+      "arch": "aarch64",
+      "libc": "glibc",
+      "variant": "render",
+      "file": "obscura-aarch64-linux.tar.gz",
+      "size": 69952302,
+      "sha256": "4ee0aeeb38fa8bb2cb004ba104abe1c79f1bdfd02f51672c694e8234a5ae0e5c",
+      "source": "upstream"
+    },
+    {
+      "os": "darwin",
+      "arch": "aarch64",
+      "libc": "darwin",
+      "variant": "render",
+      "file": "obscura-aarch64-macos.tar.gz",
+      "size": 67612634,
+      "sha256": "fc7e73f23058f18d6d5be983d83b24ba374d12167677657a307a9476c0f5a7c1",
+      "source": "upstream"
+    },
+    {
+      "os": "darwin",
+      "arch": "x86_64",
+      "libc": "darwin",
+      "variant": "render",
+      "file": "obscura-x86_64-macos.tar.gz",
+      "size": 69818596,
+      "sha256": "c47383e5b5551e09d2055ee7bdcce788af409fb4394e39bdaf179734df18e829",
+      "source": "upstream"
+    },
+    {
+      "os": "win32",
+      "arch": "x86_64",
+      "libc": "msvc",
+      "variant": "render",
+      "file": "obscura-x86_64-windows.zip",
+      "size": 72427564,
+      "sha256": "be983b663552e11faf8c1e07696578bad622dbeb48afb9f59036032ca8e97fb3",
+      "source": "upstream"
+    },
+    {
+      "os": "openharmony",
+      "arch": "aarch64",
+      "libc": "musl",
+      "variant": "render",
+      "file": "obscura-aarch64-ohos.tar.gz",
+      "size": 81738044,
+      "sha256": "8a2bbeda535a680e6423a121aef87da2b5fc2ca5e0fb3135bc88095f9474c199",
+      "source": "self-built-ohos",
+      "version": "0.1.0-dev+0ecc417",
+      "notes": "musl 动态链接 OHOS libc；已 ohos-selfsign 自签；由本项目 tools/build-obscura-ohos.sh 产出"
+    }
+  ],
+  "notes": {
+    "variant": "默认 render（含布局/截图/PDF 能力）；stealth 变体（BoringSSL、TLS 指纹）暂未纳入",
+    "windows": "上游提供原生 exe（lightpanda 需要 WSL2，这是本 skill 的差异点）",
+    "openharmony": "上游不发 musl/OHOS 资产，由本项目自建并随 release 发布；也可用 DSH_OBSCURA_LOCAL_DIR 离线放置",
+    "fonts": "内嵌仅 Noto Sans/Arabic/Hebrew；CJK 渲染需 serve --font-dir /system/fonts（fetch --screenshot 没有该参数）"
+  }
+}
