@@ -105,3 +105,9 @@ node skill/dsh-obscura/scripts/login.mjs answer --port 9222 --code A7K3 --succes
 | `tools/` | 构建 OHOS 资产、刷新 manifest、发布 |
 | `_build/` | 构建产物与下载缓存（**不入库**） |
 | `_refer/` | 上游源码原始副本（**不入库**） |
+
+## 许可
+
+- **本仓库的 skill 代码与文档：MIT**（见 [LICENSE](LICENSE)）。
+- **Obscura 二进制**：由上游 [h4ckf0r0day/obscura](https://github.com/h4ckf0r0day/obscura) 构建，**Apache-2.0**；
+  OHOS 版为本项目自建，同样遵循上游 Apache-2.0。
