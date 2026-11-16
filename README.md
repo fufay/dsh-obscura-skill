@@ -3,6 +3,28 @@
 > 把 **Obscura** 封装成跨平台 DSH skill：真渲染截图/PDF、cookie 持久化、CDP、Windows 原生。
 > 创建于 2026-11-14；上位项目 `dsh-lightpanda-skill` 的结构参照。
 
+## 与 dsh-lightpanda-skill 的比较优势
+
+两者都是本机的无头浏览器 skill；**dsh-obscura 是"完整浏览器后端"，dsh-lightpanda 是"轻量抓取后端"**。
+同一个任务，Obscura 多出来的能力：
+
+| 维度 | dsh-lightpanda | dsh-obscura（本 skill） |
+|---|---|---|
+| 渲染 | 轻量渲染 | **真渲染**（Taffy 布局 + 文本整形）；截图、全页截图、`Page.printToPDF` |
+| 内容导出 | markdown / html / structured_data / semantic_tree | 再加 **text / links / assets（子资源清单）/ cookies（含 HttpOnly）/ original（原样 body）** |
+| 登录态 | `--cookie` / `--cookie-jar` 文件 | **`--storage-dir` 持久化**（cookie/localStorage 跨进程重启），`login.mjs` 两步登录 + 图形验证码（agent 识别后回填） |
+| 反爬 | 无 | **可选 stealth**（BoringSSL/TLS 指纹 + GREASE + HTTP/2 + tracker 屏蔽；实测 JA3 与 render 不同） |
+| Windows | 需 WSL2 | **原生 exe** |
+| 协议面 | LP 专有 CDP 方法 | **标准 Chrome 风格 CDP**（Puppeteer/Playwright 可接）+ 内置 **MCP** |
+| 并发抓取 | 批量 | `scrape --concurrency`（默认 10） |
+| 体积 / 启动成本 | **更轻更快**（74MB 级） | 更重（OHOS 94MB，真渲染 + V8） |
+
+**结论**：要"内容/接口抓取、体积敏感"→ lightpanda 仍合适；要"渲染截图、PDF、登录态、反爬、Windows 原生、CDP/MCP"
+→ 用 dsh-obscura。两者 skill 名不同，可以共存。
+
+**本机现状**：已卸载 `dsh-lightpanda`（保留源码仓库），抓取/截图/PDF/登录统一走 `dsh-obscura`。
+更细的权衡与实测数据见 [docs/10-设计与能力对比.md](docs/10-设计与能力对比.md)。
+
 ## 安装（DSH Desktop / Whale）
 
 ```sh
